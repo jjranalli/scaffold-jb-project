@@ -1,14 +1,37 @@
 // deploy/00_deploy_your_contract.js
 
-//const { ethers } = require("hardhat");
+const { ethers } = require("hardhat");
+const addresses = require("../../../addresses.json");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+
+  const env = "testnet"; // tesntet OR mainnet
+  const defaultProjectId = 4236; // ID of JB project linked to contract
+  const defaultBeneficiary = ethers.constants.AddressZero; // ethers.constants.AddressZero if none
+  const defaultPreferClaimedTokens = true;
+  const defaultMemo = "Sent from JB-SCAFFOLD";
+  const defaultMetadata = [];
+  const directory = addresses[env].JBDirectory;
+  const owner = deployer; // Owner's address
+  // AddToBalance preferred to avoid ERC20 being minted to Slice {fundsModule}
+  const defaultPreferAddToBalance =
+    defaultBeneficiary === ethers.constants.AddressZero;
+
   await deploy("YourContract", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    //args: [ "Hello", ethers.utils.parseEther("1.5") ],
+    args: [
+      defaultProjectId,
+      defaultBeneficiary,
+      defaultPreferClaimedTokens,
+      defaultMemo,
+      defaultMetadata,
+      defaultPreferAddToBalance,
+      directory,
+      owner,
+    ],
     log: true,
   });
 
